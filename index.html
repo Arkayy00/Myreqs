@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Laraib!</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet">
+
+  <!-- Confetti Library -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    * { box-sizing: border-box; }
+    body { 
+      margin: 0; 
+      font-family: "Pixelify Sans", sans-serif; 
+      background: linear-gradient(135deg, #ffb6c1, #ffc0cb); 
+      height: 100vh; 
+      display: flex; 
+      justify-content: center; 
+      align-items: center; 
+      overflow: hidden;  
+    }
+    /* Envelope Screen */
+    #envelope-container { text-align: center; cursor: pointer; }
+    #envelope { width: 220px; max-width: 80vw; }
+    /* Letter Screen */
+    #letter-container { display: none; width: 100%; height: 100vh; justify-content: center; align-items: center; }
+    .letter-window { 
+      background: white; 
+      padding: 20px; 
+      border-radius: 18px; 
+      width: 90%; 
+      max-width: 400px; 
+      text-align: center; 
+      box-shadow: 0 15px 35px rgba(0,0,0,0.25); 
+    }
+    h1 { font-size: 1.5rem; margin-bottom: 10px; }
+    .cat { width: 150px; max-width: 70%; margin: 10px 0; }
+    .buttons { display: flex; justify-content: space-around; margin-top: 20px; }
+    .btn { width: 90px; max-width: 40vw; cursor: pointer; transition: transform 0.2s ease; }
+    .btn:hover { transform: scale(1.1); }
+    .final-text { margin-top: 20px; font-size: 1.2rem; display: none; }
+    @media (max-width: 480px) { 
+      h1 { font-size: 1.3rem; } 
+      .btn { width: 80px; } 
+    }
+  </style>
+</head>
+<body>
+  <!-- Background Music -->
+  <audio id="bg-music" loop>
+    <source src="music.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- Envelope -->
+  <div id="envelope-container">
+    <img src="envelope.png" id="envelope" alt="Envelope">
+    <p>♡ Letter for You ♡</p>
+    <small>(tap to open)</small>
+  </div>
+
+  <!-- Letter -->
+  <div id="letter-container">
+    <div class="letter-window">
+      <h1>Will you be my Valentine?</h1>
+      <img src="cat_heart.gif" class="cat" alt="Cat">
+      <div class="buttons">
+        <img src="yes.png" class="btn yes-btn" alt="Yes">
+        <img src="no.png" class="btn no-btn" alt="No">
+      </div>
+      <p class="final-text" id="final-text">
+        <strong>Valentine Date:</strong> It’s a date 💖
+      </p>
+    </div>
+  </div>
+
+  <script>
+    const envelope = document.getElementById("envelope-container");
+    const letter = document.getElementById("letter-container");
+    const yesBtn = document.querySelector(".yes-btn");
+    const noBtn = document.querySelector(".no-btn");
+    const finalText = document.getElementById("final-text");
+    const music = document.getElementById("bg-music");
+
+    // Open envelope + start music
+    envelope.addEventListener("click", () => {
+      envelope.style.display = "none";
+      letter.style.display = "flex";
+      music.volume = 100;
+      music.play().catch(() => {});
+    });
+
+    // YES button → confetti 🎉
+    yesBtn.addEventListener("click", () => {
+      finalText.style.display = "block";
+      yesBtn.style.display = "none";
+      noBtn.style.display = "none";
+
+      // First big burst
+      confetti({
+        particleCount: 180,
+        spread: 80,
+        origin: { y: 0.6 },
+        colors: ['#ff69b4', '#ffb6c1', '#ff1493', '#fff0f5']
+      });
+
+      // Second big burst
+      setTimeout(() => {
+        confetti({
+          particleCount: 120,
+          spread: 120,
+          origin: { y: 0.4 },
+          colors: ['#ff69b4', '#ffb6c1', '#ff1493', '#fff0f5']
+        });
+      }, 300);
+
+      // Extra: small continuous confetti for 2 seconds
+      let end = Date.now() + 2000;
+      (function frame() {
+        confetti({
+          particleCount: 5,
+          angle: 60,
+          spread: 55,
+          origin: { x: Math.random(), y: Math.random() * 0.5 },
+          colors: ['#ff69b4', '#ffb6c1', '#ff1493']
+        });
+        if (Date.now() < end) requestAnimationFrame(frame);
+      }());
+    });
+
+    // NO button runs away 😈
+    noBtn.addEventListener("mouseover", () => {
+      
+      const x = Math.random() * 110 - 130;
+      const y = Math.random() * 130 - 110;
+      noBtn.style.transform = `translate(${x}px, ${y}px)`;
+    });
+  </script>
+</body>
+</html>
